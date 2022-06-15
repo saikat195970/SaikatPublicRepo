@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Insert Update and Delete record with AJAX in Laravel</title>
+  <!-- provide the csrf token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <link rel="stylesheet" href="/KSL/templates/MyCSS.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><!-- jQuery CDN -->
+  <!--<script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>-->
+</head>
+<body>
+<div class="table-wrapper">
+<h2>KSL Details</h2>
+<table  id='userTable' class="fl-table">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>User Name</th>
+    <th>Server Name</th>
+    <th>Comments</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><input type='text' id='id' readonly></td>
+    <td><input type='text' id='userName'  readonly></td>
+    <td><input type='text' id='serverName' readonly></td>
+    <td><input type='text' id='comments' ></td>
+  </tr>
+  </tbody>
+</table>
+</div>
+<!-- Script -->
+<script type='text/javascript'>
+var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+$(document).ready(function(){
+
+    // Fetch records
+  fetchRecords();
+
+
+// Update record
+$(document).on("click", ".update" , function() {
+  var edit_id = $(this).data('id');
+
+  var comments = $('#comments_'+edit_id).val();
+
+  if(comments != '' ){
+    $.ajax({
+    url: 'http://localhost:8088/app/update',
+      type: 'post',
+      data: {id: edit_id,comments:comments},
+      success: function(response){
+        alert("updated successfully");
+      }
+    });
+  }else{
+    alert('please provide comments');
+  }
+});
+
+
+//fetch records impl
+function fetchRecords(){
+  $.ajax({
+    url: 'http://localhost:8088/app/tttt',
+    type: 'GET',
+    dataType: 'json',
+    success: function(response){
+
+      console.log("get method called..");
+      console.log(response)
+      var len = 0;
+      $('#userTable tbody tr:not(:first)').empty(); // Empty <tbody>
+         console.log("length : "+response.length);
+
+        len = response.length;
+
+      if(len > 0){
+        for(var i=0; i<len; i++){
+
+          var id = response[i].id;
+          var userName = response[i].userName;
+          var serverName = response[i].serverName;
+          var comments = response[i].comments;
+
+          var tr_str = "<tr>" +
+          "<td align='center'><input type='text' value='" + id + "' id='id_"+id+"' readonly></td>" +
+          "<td align='center'><input type='text' value='" + userName + "' id='userName_"+id+"' readonly></td>" +
+          "<td align='center'><input type='text' value='" + serverName + "' id='serverName_"+id+"' readonly></td>" +
+          "<td align='center'><input type='text' value='" + comments + "' id='comments_"+id+"'></td>" +
+          "<td align='center'><input type='button' value='Update' class='update' data-id='"+id+"' ></td>"+
+          "</tr>";
+
+          $("#userTable tbody").append(tr_str);
+
+        }
+    }else{
+        var tr_str = "<tr class='norecord'>" +
+        "<td align='center' colspan='4'>No record found.</td>" +
+        "</tr>";
+
+        $("#userTable tbody").append(tr_str);
+      }
+
+    }
+  });
+}
+
+})
+
+</script>
+
+</body>
+</html>
