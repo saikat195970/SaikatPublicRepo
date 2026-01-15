@@ -1,0 +1,19 @@
+server:
+  endpoint: wss://127.0.0.1:4320/v1/opamp
+  tls:
+    insecure_skip_verify: true
+
+capabilities:
+  accepts_remote_config: true
+  reports_effective_config: true
+  reports_health: true
+  reports_own_metrics: true
+  reports_own_logs: true
+  reports_remote_config: true
+
+agent:
+  executable: /home/saikatpramanik/otelcontribcol_linux_arm64
+  # NO config_file - Supervisor injects OpAMP extension automatically
+  
+storage:
+  directory: /home/saikatpramanik/tmp
